@@ -68,10 +68,11 @@ class LineChart(MatplotlibViz):
     
     # Overwrite the parent class's `visualization`
     # method. Use the same parameters as the parent
-    def visualization(self, data, **kwargs):
+    def visualization(self, entity_id, model):
         # Pass the `asset_id` argument to
         # the model's `event_counts` method to
         # receive the x (Day) and y (event count)
+        data = model.event_counts(entity_id)
         
         # Use the pandas .fillna method to fill nulls with 0
         data = data.fillna(0)
@@ -107,7 +108,8 @@ class LineChart(MatplotlibViz):
         # the border color and font color to black. 
         # Reference the base_components/matplotlib_viz file 
         # to inspect the supported keyword arguments
-        self.set_axis_styling(ax, border_color='black', font_color='black')
+        self.set_axis_styling(ax, bordercolor='black', fontcolor='black')
+
         
         # Set title and labels for x and y axis
         ax.set_title('Cumulative Performance Events Over Time')
@@ -127,11 +129,12 @@ class BarChart(MatplotlibViz):
 
     # Overwrite the parent class `visualization` method
     # Use the same parameters as the parent
-    def visualization(self, data, **kwargs):
+    def visualization(self, entity_id, model):
         # Using the model and asset_id arguments
         # pass the `asset_id` to the `.model_data` method
         # to receive the data that can be passed to the machine
         # learning model
+        data = model.model_data(entity_id)
         
         # Using the predictor class attribute
         # pass the data to the `predict_proba` method
@@ -146,8 +149,7 @@ class BarChart(MatplotlibViz):
         #
         # If the model's name attribute is "team"
         # We want to visualize the mean of the predict_proba output
-        model = kwargs.get('model')
-        if model and getattr(model, 'name', None) == "team":
+        if getattr(model, 'name', None) == "team":
             pred = probs.mean()
         else:
             # Otherwise set `pred` to the first value
@@ -165,7 +167,8 @@ class BarChart(MatplotlibViz):
         # pass the axis variable
         # to the `.set_axis_styling`
         # method
-        self.set_axis_styling(ax, border_color='black', font_color='black')
+        self.set_axis_styling(ax, bordercolor='black', fontcolor='black')
+
         
         return fig
 
